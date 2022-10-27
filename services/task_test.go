@@ -1,9 +1,9 @@
 package services
 
 import (
-	"github.com/cloud-ca/go-cloudca/api"
-	"github.com/cloud-ca/go-cloudca/mocks"
-	"github.com/cloud-ca/go-cloudca/mocks/api_mocks"
+	"github.com/hypertec-cloud/go-hci/api"
+	"github.com/hypertec-cloud/go-hci/mocks"
+	"github.com/hypertec-cloud/go-hci/mocks/api_mocks"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -18,10 +18,10 @@ func TestGetTaskReturnTaskIfSuccess(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockCcaClient := api_mocks.NewMockApiClient(ctrl)
+	mockHciClient := api_mocks.NewMockApiClient(ctrl)
 
 	taskService := TaskApi{
-		apiClient: mockCcaClient,
+		apiClient: mockHciClient,
 	}
 
 	expectedTask := Task{
@@ -31,10 +31,10 @@ func TestGetTaskReturnTaskIfSuccess(t *testing.T) {
 		Result:  []byte(`{"key": "value"}`),
 	}
 
-	mockCcaClient.EXPECT().Do(api.CcaRequest{
+	mockHciClient.EXPECT().Do(api.HciRequest{
 		Method:   api.GET,
 		Endpoint: "tasks/" + TEST_TASK_ID,
-	}).Return(&api.CcaResponse{
+	}).Return(&api.HciResponse{
 		StatusCode: 200,
 		Data:       []byte(`{"id":"` + TEST_TASK_ID + `", "status":"SUCCESS", "created":"2015-07-07", "result":{"key": "value"}}`),
 	}, nil)
@@ -46,32 +46,32 @@ func TestGetTaskReturnTaskIfSuccess(t *testing.T) {
 	assert.Equal(t, expectedTask, *task)
 }
 
-func TestGetTaskReturnErrorIfHasCcaErrors(t *testing.T) {
+func TestGetTaskReturnErrorIfHasHciErrors(t *testing.T) {
 	//given
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockCcaClient := api_mocks.NewMockApiClient(ctrl)
+	mockHciClient := api_mocks.NewMockApiClient(ctrl)
 
 	taskService := TaskApi{
-		apiClient: mockCcaClient,
+		apiClient: mockHciClient,
 	}
 
-	ccaResponse := api.CcaResponse{
+	hciResponse := api.HciResponse{
 		StatusCode: 400,
-		Errors:     []api.CcaError{{}},
+		Errors:     []api.HciError{{}},
 	}
-	mockCcaClient.EXPECT().Do(api.CcaRequest{
+	mockHciClient.EXPECT().Do(api.HciRequest{
 		Method:   api.GET,
 		Endpoint: "tasks/" + TEST_TASK_ID,
-	}).Return(&ccaResponse, nil)
+	}).Return(&hciResponse, nil)
 
 	//when
 	task, err := taskService.Get(TEST_TASK_ID)
 
 	//then
 	assert.Nil(t, task)
-	assert.Equal(t, api.CcaErrorResponse(ccaResponse), err)
+	assert.Equal(t, api.HciErrorResponse(hciResponse), err)
 }
 
 func TestGetTaskReturnErrorIfHasUnexpectedErrors(t *testing.T) {
@@ -79,15 +79,15 @@ func TestGetTaskReturnErrorIfHasUnexpectedErrors(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockCcaClient := api_mocks.NewMockApiClient(ctrl)
+	mockHciClient := api_mocks.NewMockApiClient(ctrl)
 
 	taskService := TaskApi{
-		apiClient: mockCcaClient,
+		apiClient: mockHciClient,
 	}
 
 	mockError := mocks.MockError{"some_get_task_error"}
 
-	mockCcaClient.EXPECT().Do(api.CcaRequest{
+	mockHciClient.EXPECT().Do(api.HciRequest{
 		Method:   api.GET,
 		Endpoint: "tasks/" + TEST_TASK_ID,
 	}).Return(nil, mockError)
@@ -105,31 +105,31 @@ func TestPollingReturnTaskResultOnSuccessfulComplete(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockCcaClient := api_mocks.NewMockApiClient(ctrl)
+	mockHciClient := api_mocks.NewMockApiClient(ctrl)
 
 	taskService := TaskApi{
-		apiClient: mockCcaClient,
+		apiClient: mockHciClient,
 	}
 
-	request := api.CcaRequest{
+	request := api.HciRequest{
 		Method:   api.GET,
 		Endpoint: "tasks/" + TEST_TASK_ID,
 	}
 
 	expectedResult := []byte(`{"foo":"bar"}`)
 
-	pendingResponse := &api.CcaResponse{
+	pendingResponse := &api.HciResponse{
 		StatusCode: 200,
 		Data:       []byte(`{"id":"` + TEST_TASK_ID + `", "status":"PENDING", "created":"2015-07-07"}`),
 	}
-	successResponse := &api.CcaResponse{
+	successResponse := &api.HciResponse{
 		StatusCode: 200,
 		Data:       []byte(`{"id":"` + TEST_TASK_ID + `", "status":"SUCCESS", "created":"2015-07-07", "result":` + string(expectedResult) + `}`),
 	}
 	gomock.InOrder(
-		mockCcaClient.EXPECT().Do(request).Return(pendingResponse, nil),
-		mockCcaClient.EXPECT().Do(request).Return(pendingResponse, nil),
-		mockCcaClient.EXPECT().Do(request).Return(successResponse, nil),
+		mockHciClient.EXPECT().Do(request).Return(pendingResponse, nil),
+		mockHciClient.EXPECT().Do(request).Return(pendingResponse, nil),
+		mockHciClient.EXPECT().Do(request).Return(successResponse, nil),
 	)
 
 	//when
@@ -146,31 +146,31 @@ func TestPollingGetErrorOnTaskFailure(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockCcaClient := api_mocks.NewMockApiClient(ctrl)
+	mockHciClient := api_mocks.NewMockApiClient(ctrl)
 
 	taskService := TaskApi{
-		apiClient: mockCcaClient,
+		apiClient: mockHciClient,
 	}
 
-	request := api.CcaRequest{
+	request := api.HciRequest{
 		Method:   api.GET,
 		Endpoint: "tasks/" + TEST_TASK_ID,
 	}
 
 	expectedResult := []byte(`{"foo":"bar"}`)
 
-	pendingResponse := &api.CcaResponse{
+	pendingResponse := &api.HciResponse{
 		StatusCode: 200,
 		Data:       []byte(`{"id":"` + TEST_TASK_ID + `", "status":"PENDING", "created":"2015-07-07"}`),
 	}
-	failedResponse := &api.CcaResponse{
+	failedResponse := &api.HciResponse{
 		StatusCode: 400,
 		Data:       []byte(`{"id":"` + TEST_TASK_ID + `", "status":"FAILED", "created":"2015-07-07", "result":` + string(expectedResult) + `}`),
 	}
 	gomock.InOrder(
-		mockCcaClient.EXPECT().Do(request).Return(pendingResponse, nil),
-		mockCcaClient.EXPECT().Do(request).Return(pendingResponse, nil),
-		mockCcaClient.EXPECT().Do(request).Return(failedResponse, nil),
+		mockHciClient.EXPECT().Do(request).Return(pendingResponse, nil),
+		mockHciClient.EXPECT().Do(request).Return(pendingResponse, nil),
+		mockHciClient.EXPECT().Do(request).Return(failedResponse, nil),
 	)
 
 	//when

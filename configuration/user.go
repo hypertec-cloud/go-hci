@@ -2,7 +2,7 @@ package configuration
 
 import (
 	"encoding/json"
-	"github.com/cloud-ca/go-cloudca/api"
+	"github.com/hypertec-cloud/go-hci/api"
 )
 
 type User struct {

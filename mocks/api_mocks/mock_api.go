@@ -4,7 +4,7 @@
 package api_mocks
 
 import (
-	"github.com/cloud-ca/go-cloudca/api"
+	"github.com/hypertec-cloud/go-hci/api"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -29,9 +29,9 @@ func (_m *MockApiClient) EXPECT() *_MockApiClientRecorder {
 	return _m.recorder
 }
 
-func (_m *MockApiClient) Do(request api.CcaRequest) (*api.CcaResponse, error) {
+func (_m *MockApiClient) Do(request api.HciRequest) (*api.HciResponse, error) {
 	ret := _m.ctrl.Call(_m, "Do", request)
-	ret0, _ := ret[0].(*api.CcaResponse)
+	ret0, _ := ret[0].(*api.HciResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

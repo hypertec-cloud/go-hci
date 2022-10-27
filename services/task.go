@@ -2,7 +2,7 @@ package services
 
 import (
 	"encoding/json"
-	"github.com/cloud-ca/go-cloudca/api"
+	"github.com/hypertec-cloud/go-hci/api"
 	"strings"
 	"time"
 )
@@ -33,7 +33,7 @@ func (ft FailedTask) Error() string {
 type TaskService interface {
 	Get(id string) (*Task, error)
 	Poll(id string, milliseconds time.Duration) ([]byte, error)
-	PollResponse(response *api.CcaResponse, milliseconds time.Duration) ([]byte, error)
+	PollResponse(response *api.HciResponse, milliseconds time.Duration) ([]byte, error)
 }
 
 type TaskApi struct {
@@ -49,7 +49,7 @@ func NewTaskService(apiClient api.ApiClient) TaskService {
 
 //Retrieve a Task with sepecified id
 func (taskApi *TaskApi) Get(id string) (*Task, error) {
-	request := api.CcaRequest{
+	request := api.HciRequest{
 		Method:   api.GET,
 		Endpoint: "tasks/" + id,
 	}
@@ -57,7 +57,7 @@ func (taskApi *TaskApi) Get(id string) (*Task, error) {
 	if err != nil {
 		return nil, err
 	} else if len(response.Errors) > 0 {
-		return nil, api.CcaErrorResponse(*response)
+		return nil, api.HciErrorResponse(*response)
 	}
 	data := response.Data
 	taskMap := map[string]*json.RawMessage{}
@@ -97,11 +97,11 @@ func (taskApi *TaskApi) Poll(id string, milliseconds time.Duration) ([]byte, err
 }
 
 //Poll an the Task API. Blocks until success or failure
-func (taskApi *TaskApi) PollResponse(response *api.CcaResponse, milliseconds time.Duration) ([]byte, error) {
+func (taskApi *TaskApi) PollResponse(response *api.HciResponse, milliseconds time.Duration) ([]byte, error) {
 	if strings.EqualFold(response.TaskStatus, SUCCESS) {
 		return response.Data, nil
 	} else if strings.EqualFold(response.TaskStatus, FAILED) {
-		return nil, api.CcaErrorResponse(*response)
+		return nil, api.HciErrorResponse(*response)
 	}
 	return taskApi.Poll(response.TaskId, milliseconds)
 }

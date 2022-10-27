@@ -1,7 +1,7 @@
 package services
 
 import (
-	"github.com/cloud-ca/go-cloudca/api"
+	"github.com/hypertec-cloud/go-hci/api"
 )
 
 //A generic service to access any entity
@@ -39,7 +39,7 @@ func (entityApi *EntityApi) buildEndpoint() string {
 
 //Get an entity. Returns a []byte (of a json object) that should be unmarshalled to a specific entity
 func (entityApi *EntityApi) Get(id string, options map[string]string) ([]byte, error) {
-	request := api.CcaRequest{
+	request := api.HciRequest{
 		Method:   api.GET,
 		Endpoint: entityApi.buildEndpoint() + "/" + id,
 		Options:  options,
@@ -48,14 +48,14 @@ func (entityApi *EntityApi) Get(id string, options map[string]string) ([]byte, e
 	if err != nil {
 		return nil, err
 	} else if response.IsError() {
-		return nil, api.CcaErrorResponse(*response)
+		return nil, api.HciErrorResponse(*response)
 	}
 	return response.Data, nil
 }
 
 //Get an entity list. Returns a []byte (of a json object) that should be unmarshalled to a specific entity
 func (entityApi *EntityApi) List(options map[string]string) ([]byte, error) {
-	request := api.CcaRequest{
+	request := api.HciRequest{
 		Method:   api.GET,
 		Endpoint: entityApi.buildEndpoint(),
 		Options:  options,
@@ -64,7 +64,7 @@ func (entityApi *EntityApi) List(options map[string]string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	} else if response.IsError() {
-		return nil, api.CcaErrorResponse(*response)
+		return nil, api.HciErrorResponse(*response)
 	}
 	return response.Data, nil
 }
@@ -80,7 +80,7 @@ func (entityApi *EntityApi) Execute(id string, operation string, body []byte, op
 	if id != "" {
 		endpoint = endpoint + "/" + id
 	}
-	request := api.CcaRequest{
+	request := api.HciRequest{
 		Method:   api.POST,
 		Body:     body,
 		Endpoint: endpoint,
@@ -90,7 +90,7 @@ func (entityApi *EntityApi) Execute(id string, operation string, body []byte, op
 	if err != nil {
 		return nil, err
 	} else if response.IsError() {
-		return nil, api.CcaErrorResponse(*response)
+		return nil, api.HciErrorResponse(*response)
 	}
 
 	return entityApi.taskService.PollResponse(response, DEFAULT_POLLING_INTERVAL)
@@ -98,7 +98,7 @@ func (entityApi *EntityApi) Execute(id string, operation string, body []byte, op
 
 //Create a new entity described in the body parameter (json object). Returns a []byte (of a json object) that should be unmarshalled to a specific entity
 func (entityApi *EntityApi) Create(body []byte, options map[string]string) ([]byte, error) {
-	request := api.CcaRequest{
+	request := api.HciRequest{
 		Method:   api.POST,
 		Body:     body,
 		Endpoint: entityApi.buildEndpoint(),
@@ -108,14 +108,14 @@ func (entityApi *EntityApi) Create(body []byte, options map[string]string) ([]by
 	if err != nil {
 		return nil, err
 	} else if response.IsError() {
-		return nil, api.CcaErrorResponse(*response)
+		return nil, api.HciErrorResponse(*response)
 	}
 	return entityApi.taskService.PollResponse(response, DEFAULT_POLLING_INTERVAL)
 }
 
 //Update entity with specified id described in the body parameter (json object). Returns a []byte (of a json object) that should be unmarshalled to a specific entity
 func (entityApi *EntityApi) Update(id string, body []byte, options map[string]string) ([]byte, error) {
-	request := api.CcaRequest{
+	request := api.HciRequest{
 		Method:   api.PUT,
 		Body:     body,
 		Endpoint: entityApi.buildEndpoint() + "/" + id,
@@ -125,14 +125,14 @@ func (entityApi *EntityApi) Update(id string, body []byte, options map[string]st
 	if err != nil {
 		return nil, err
 	} else if response.IsError() {
-		return nil, api.CcaErrorResponse(*response)
+		return nil, api.HciErrorResponse(*response)
 	}
 	return entityApi.taskService.PollResponse(response, DEFAULT_POLLING_INTERVAL)
 }
 
 //Delete specified id described. A body (json object) can be provided if some fields must be sent to server. Returns a []byte (of a json object) that should be unmarshalled to a specific entity
 func (entityApi EntityApi) Delete(id string, body []byte, options map[string]string) ([]byte, error) {
-	request := api.CcaRequest{
+	request := api.HciRequest{
 		Method:   api.DELETE,
 		Body:     body,
 		Endpoint: entityApi.buildEndpoint() + "/" + id,
@@ -142,7 +142,7 @@ func (entityApi EntityApi) Delete(id string, body []byte, options map[string]str
 	if err != nil {
 		return nil, err
 	} else if response.IsError() {
-		return nil, api.CcaErrorResponse(*response)
+		return nil, api.HciErrorResponse(*response)
 	}
 	return entityApi.taskService.PollResponse(response, DEFAULT_POLLING_INTERVAL)
 }

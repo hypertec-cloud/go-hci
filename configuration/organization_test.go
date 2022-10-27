@@ -3,8 +3,8 @@ package configuration
 import (
 	"encoding/json"
 
-	"github.com/cloud-ca/go-cloudca/mocks"
-	"github.com/cloud-ca/go-cloudca/mocks/configuration_mocks"
+	"github.com/hypertec-cloud/go-hci/mocks"
+	"github.com/hypertec-cloud/go-hci/mocks/configuration_mocks"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"testing"

@@ -1,4 +1,4 @@
-# go-cloudca
+# go-hci
 
 [![GoDoc](https://godoc.org/github.com/cloud-ca/go-cloudca?status.svg)](https://godoc.org/github.com/cloud-ca/go-cloudca)
 [![Build Status](https://circleci.com/gh/cloud-ca/go-cloudca.svg?style=svg)](https://circleci.com/gh/cloud-ca/go-cloudca)
@@ -11,49 +11,49 @@ A cloud.ca client for the Go programming language
 Import
 
 ```go
-import "github.com/cloud-ca/go-cloudca"
+import "github.com/hypertec-cloud/go-hci"
 
 /* import the services you need */
-import "github.com/cloud-ca/go-cloudca/services/cloudca"
+import "github.com/hypertec-cloud/go-hci/services/chi"
 ```
 
-Create a new CcaClient.
+Create a new HciClient.
 
 ```go
-ccaClient := cca.NewCcaClient("[your-api-key]")
+hciClient := hci.NewHciClient("[your-api-key]")
 ```
 
 Retrieve the list of environments
 
 ```go
-environments, _ := ccaClient.Environments.List()
+environments, _ := hciClient.Environments.List()
 ```
 
-Get the ServiceResources object for a specific environment and service. Here, we assume that it is a cloudca service.
+Get the ServiceResources object for a specific environment and service. Here, we assume that it is a hci service.
 
 ```go
-resources, _ := ccaClient.GetResources("[service-code]", "[environment-name]")
-ccaResources := resources.(cloudca.Resources)
+resources, _ := hciClient.GetResources("[service-code]", "[environment-name]")
+hciResources := resources.(hci.Resources)
 ```
 
-Now with the cloudca ServiceResources object, we can execute operations on cloudca resources in the specified environment.
+Now with the hci ServiceResources object, we can execute operations on hci resources in the specified environment.
 
 Retrieve the list of instances in the environment.
 
 ```go
-instances, _ := ccaResources.Instances.List()
+instances, _ := hciResources.Instances.List()
 ```
 
 Get a specific volume in the environment.
 
 ```go
-volume, _ := ccaResources.Volumes.Get("[some-volume-id]")
+volume, _ := hciResources.Volumes.Get("[some-volume-id]")
 ```
 
 Create a new instance in the environment.
 
 ```go
-createdInstance, _ := ccaResources.Instances.Create(cloudca.Instance{
+createdInstance, _ := hciResources.Instances.Create(hci.Instance{
     Name: "[new-instance-name]",
     TemplateId: "[some-template-id]",
     ComputeOfferingId:"[some-compute-offering-id]",
@@ -67,19 +67,19 @@ When trying to get a volume with a bogus id, an error will be returned.
 
 ```go
 // Get a volume with a bogus id
-_, err := ccaResources.Volumes.Get("[some-volume-id]")
+_, err := hciResources.Volumes.Get("[some-volume-id]")
 ```
 
 Two types of error can occur: an unexpected error (ex: unable to connect to server) or an API error (ex: service resource not found)
-If an error has occured, then we first try to cast the error into a CcaErrorResponse. This object contains the HTTP status code returned by the server, an error code and a list of CcaError objects. If it's not a CcaErrorResponse, then the error was not returned by the API.
+If an error has occured, then we first try to cast the error into a HciErrorResponse. This object contains the HTTP status code returned by the server, an error code and a list of HciError objects. If it's not a HciErrorResponse, then the error was not returned by the API.
 
 ```go
 if err != nil {
-    if errorResponse, ok := err.(api.CcaErrorResponse); ok {
+    if errorResponse, ok := err.(api.HciErrorResponse); ok {
         if errorResponse.StatusCode == api.NOT_FOUND {
             fmt.Println("Volume was not found")
         } else {
-            // Can get more details from the CcaErrors
+            // Can get more details from the HciErrors
             fmt.Println(errorResponse.Errors)
         }
     } else {
@@ -96,7 +96,7 @@ This project is licensed under the terms of the MIT license.
 ```txt
 The MIT License (MIT)
 
-Copyright (c) 2019 cloud.ca
+Copyright (c) 2019 Hypertec.cloud
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

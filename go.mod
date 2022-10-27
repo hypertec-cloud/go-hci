@@ -1,4 +1,4 @@
-module github.com/cloud-ca/go-cloudca
+module github.com/hypertec-cloud/go-hci
 
 go 1.12
 

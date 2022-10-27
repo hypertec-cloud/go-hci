@@ -9,7 +9,7 @@ const (
 )
 
 //A request object
-type CcaRequest struct {
+type HciRequest struct {
 	Method   string
 	Endpoint string
 	Body     []byte

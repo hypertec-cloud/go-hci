@@ -29,9 +29,9 @@ func TestGetTaskReturnTaskIfSuccess(t *testing.T) {
 	}
 
 	httpClient := &http.Client{Transport: transport}
-	ccaClient := CcaApiClient{server.URL, "api-key", httpClient}
+	hciClient := HciApiClient{server.URL, "api-key", httpClient}
 
-	expectedResp := CcaResponse{
+	expectedResp := HciResponse{
 		TaskId:     "test_task_id",
 		TaskStatus: "test_task_status",
 		Data:       []byte(`{"key":"value"}`),
@@ -40,7 +40,7 @@ func TestGetTaskReturnTaskIfSuccess(t *testing.T) {
 	}
 
 	//when
-	resp, _ := ccaClient.Do(CcaRequest{Method: "GET", Endpoint: "/fooo"})
+	resp, _ := hciClient.Do(HciRequest{Method: "GET", Endpoint: "/fooo"})
 
 	//then
 	assert.Equal(t, expectedResp, *resp)
@@ -62,15 +62,15 @@ func TestGetTaskReturnErrorsIfErrorOccured(t *testing.T) {
 	}
 
 	httpClient := &http.Client{Transport: transport}
-	ccaClient := CcaApiClient{server.URL, "api-key", httpClient}
+	hciClient := HciApiClient{server.URL, "api-key", httpClient}
 
-	expectedResp := CcaResponse{
-		Errors:     []CcaError{{ErrorCode: "FOO_ERROR", Message: "message1"}, {ErrorCode: "BAR_ERROR", Message: "message2"}},
+	expectedResp := HciResponse{
+		Errors:     []HciError{{ErrorCode: "FOO_ERROR", Message: "message1"}, {ErrorCode: "BAR_ERROR", Message: "message2"}},
 		StatusCode: 400,
 	}
 
 	//when
-	resp, _ := ccaClient.Do(CcaRequest{Method: "GET", Endpoint: "/fooo"})
+	resp, _ := hciClient.Do(HciRequest{Method: "GET", Endpoint: "/fooo"})
 
 	//then
 	assert.Equal(t, expectedResp, *resp)

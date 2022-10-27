@@ -10,12 +10,12 @@ import (
 )
 
 type ApiClient interface {
-	Do(request CcaRequest) (*CcaResponse, error)
+	Do(request HciRequest) (*HciResponse, error)
 	GetApiURL() string
 	GetApiKey() string
 }
 
-type CcaApiClient struct {
+type HciApiClient struct {
 	apiURL     string
 	apiKey     string
 	httpClient *http.Client
@@ -24,7 +24,7 @@ type CcaApiClient struct {
 const API_KEY_HEADER = "MC-Api-Key"
 
 func NewApiClient(apiURL, apiKey string) ApiClient {
-	return CcaApiClient{
+	return HciApiClient{
 		apiURL:     apiURL,
 		apiKey:     apiKey,
 		httpClient: &http.Client{},
@@ -35,7 +35,7 @@ func NewInsecureApiClient(apiURL, apiKey string) ApiClient {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
-	return CcaApiClient{
+	return HciApiClient{
 		apiURL:     apiURL,
 		apiKey:     apiKey,
 		httpClient: &http.Client{Transport: tr},
@@ -43,20 +43,20 @@ func NewInsecureApiClient(apiURL, apiKey string) ApiClient {
 }
 
 //Build a URL by using endpoint and options. Options will be set as query parameters.
-func (ccaClient CcaApiClient) buildUrl(endpoint string, options map[string]string) string {
+func (hciClient HciApiClient) buildUrl(endpoint string, options map[string]string) string {
 	query := url.Values{}
 	if options != nil {
 		for k, v := range options {
 			query.Add(k, v)
 		}
 	}
-	u, _ := url.Parse(ccaClient.apiURL + "/" + strings.Trim(endpoint, "/") + "?" + query.Encode())
+	u, _ := url.Parse(hciClient.apiURL + "/" + strings.Trim(endpoint, "/") + "?" + query.Encode())
 	return u.String()
 }
 
-//Does the API call to server and returns a CCAResponse. Cloud.ca errors will be returned in the
-//CCAResponse body, not in the error return value. The error return value is reserved for unexpected errors.
-func (ccaClient CcaApiClient) Do(request CcaRequest) (*CcaResponse, error) {
+//Does the API call to server and returns a HCIResponse. hci errors will be returned in the
+//HCIResponse body, not in the error return value. The error return value is reserved for unexpected errors.
+func (hciClient HciApiClient) Do(request HciRequest) (*HciResponse, error) {
 	var bodyBuffer io.Reader
 	if request.Body != nil {
 		bodyBuffer = bytes.NewBuffer(request.Body)
@@ -65,24 +65,24 @@ func (ccaClient CcaApiClient) Do(request CcaRequest) (*CcaResponse, error) {
 	if method == "" {
 		method = "GET"
 	}
-	req, err := http.NewRequest(request.Method, ccaClient.buildUrl(request.Endpoint, request.Options), bodyBuffer)
+	req, err := http.NewRequest(request.Method, hciClient.buildUrl(request.Endpoint, request.Options), bodyBuffer)
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Add(API_KEY_HEADER, ccaClient.apiKey)
+	req.Header.Add(API_KEY_HEADER, hciClient.apiKey)
 	req.Header.Add("Content-Type", "application/json")
-	resp, err := ccaClient.httpClient.Do(req)
+	resp, err := hciClient.httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
-	return NewCcaResponse(resp)
+	return NewHciResponse(resp)
 }
 
-func (ccaClient CcaApiClient) GetApiKey() string {
-	return ccaClient.apiKey
+func (hciClient HciApiClient) GetApiKey() string {
+	return hciClient.apiKey
 }
 
-func (ccaClient CcaApiClient) GetApiURL() string {
-	return ccaClient.apiURL
+func (hciClient HciApiClient) GetApiURL() string {
+	return hciClient.apiURL
 }

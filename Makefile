@@ -1,8 +1,8 @@
 # Project variables
-NAME        := go-cloudca
-DESCRIPTION := A cloud.ca client for the Go programming language
-VENDOR      := cloud.ca
-URL         := https://github.com/cloud-ca/go-cloudca
+NAME        := go-hci
+DESCRIPTION := A hci client for the Go programming language
+VENDOR      := hci
+URL         := https://github.com/hypertec-cloud/go-hci
 LICENSE     := MIT
 
 # Build variables

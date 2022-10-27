@@ -1,17 +1,17 @@
-package cca
+package hci
 
 import (
-	"github.com/cloud-ca/go-cloudca/api"
-	"github.com/cloud-ca/go-cloudca/configuration"
-	"github.com/cloud-ca/go-cloudca/services"
-	"github.com/cloud-ca/go-cloudca/services/cloudca"
+	"github.com/hypertec-cloud/go-hci/api"
+	"github.com/hypertec-cloud/go-hci/configuration"
+	"github.com/hypertec-cloud/go-hci/services"
+	"github.com/hypertec-cloud/go-hci/services/hci"
 )
 
 const (
-	DEFAULT_API_URL = "https://api.cloud.ca/v1/"
+	DEFAULT_API_URL = "https://hypertec.cloud/api/v1/"
 )
 
-type CcaClient struct {
+type HciClient struct {
 	apiClient          api.ApiClient
 	Tasks              services.TaskService
 	Environments       configuration.EnvironmentService
@@ -20,25 +20,25 @@ type CcaClient struct {
 	Organizations      configuration.OrganizationService
 }
 
-//Create a CcaClient with the default URL
-func NewCcaClient(apiKey string) *CcaClient {
-	return NewCcaClientWithURL(DEFAULT_API_URL, apiKey)
+//Create a HciClient with the default URL
+func NewHciClient(apiKey string) *HciClient {
+	return NewHciClientWithURL(DEFAULT_API_URL, apiKey)
 }
 
-//Create a CcaClient with a custom URL
-func NewCcaClientWithURL(apiURL string, apiKey string) *CcaClient {
+//Create a HciClient with a custom URL
+func NewHciClientWithURL(apiURL string, apiKey string) *HciClient {
 	apiClient := api.NewApiClient(apiURL, apiKey)
-	return NewCcaClientWithApiClient(apiClient)
+	return NewHciClientWithApiClient(apiClient)
 }
 
-//Create a CcaClient with a custom URL that accepts insecure connections
-func NewInsecureCcaClientWithURL(apiURL string, apiKey string) *CcaClient {
+//Create a HciClient with a custom URL that accepts insecure connections
+func NewInsecureHciClientWithURL(apiURL string, apiKey string) *HciClient {
 	apiClient := api.NewInsecureApiClient(apiURL, apiKey)
-	return NewCcaClientWithApiClient(apiClient)
+	return NewHciClientWithApiClient(apiClient)
 }
 
-func NewCcaClientWithApiClient(apiClient api.ApiClient) *CcaClient {
-	ccaClient := CcaClient{
+func NewHciClientWithApiClient(apiClient api.ApiClient) *HciClient {
+	hciClient := HciClient{
 		apiClient:          apiClient,
 		Tasks:              services.NewTaskService(apiClient),
 		Environments:       configuration.NewEnvironmentService(apiClient),
@@ -46,27 +46,27 @@ func NewCcaClientWithApiClient(apiClient api.ApiClient) *CcaClient {
 		ServiceConnections: configuration.NewServiceConnectionService(apiClient),
 		Organizations:      configuration.NewOrganizationService(apiClient),
 	}
-	return &ccaClient
+	return &hciClient
 }
 
 //Get the Resources for a specific serviceCode and environmentName
-//For now it assumes that the serviceCode belongs to a cloud.ca service type
-func (c CcaClient) GetResources(serviceCode string, environmentName string) (services.ServiceResources, error) {
+//For now it assumes that the serviceCode belongs to a hci service type
+func (c HciClient) GetResources(serviceCode string, environmentName string) (services.ServiceResources, error) {
 	//TODO: change to check service type of service code
-	return cloudca.NewResources(c.apiClient, serviceCode, environmentName), nil
+	return hci.NewResources(c.apiClient, serviceCode, environmentName), nil
 }
 
 //Get the API url used to do he calls
-func (c CcaClient) GetApiURL() string {
+func (c HciClient) GetApiURL() string {
 	return c.apiClient.GetApiURL()
 }
 
 //Get the API key used in the calls
-func (c CcaClient) GetApiKey() string {
+func (c HciClient) GetApiKey() string {
 	return c.apiClient.GetApiKey()
 }
 
 //Get the API Client used by all the services
-func (c CcaClient) GetApiClient() api.ApiClient {
+func (c HciClient) GetApiClient() api.ApiClient {
 	return c.apiClient
 }
