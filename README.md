@@ -14,7 +14,7 @@ Import
 import "github.com/hypertec-cloud/go-hci"
 
 /* import the services you need */
-import "github.com/hypertec-cloud/go-hci/services/chi"
+import "github.com/hypertec-cloud/go-hci/services/hci"
 ```
 
 Create a new HciClient.
