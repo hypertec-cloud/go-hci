@@ -1,10 +1,10 @@
 package services
 
 import (
+	"github.com/golang/mock/gomock"
 	"github.com/hypertec-cloud/go-hci/api"
 	"github.com/hypertec-cloud/go-hci/mocks"
 	"github.com/hypertec-cloud/go-hci/mocks/api_mocks"
-	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
