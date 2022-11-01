@@ -60,7 +60,7 @@ test: log-test ## Run tests
 .PHONY: tools
 tools: log-tools ## Install required tools
 	@cd $$GOPATH && curl -L https://git.io/vp6lP | sh # gometalinter
-	@cd /tmp && go install -v github.com/git-chglog/git-chglog/cmd/git-chglog@latest # git-chglog
+	@bash -c "GO111MODULE=off cd /tmp && go install -v github.com/git-chglog/git-chglog/cmd/git-chglog@latest # git-chglog"
 
 #####################
 ## Release targets ##
