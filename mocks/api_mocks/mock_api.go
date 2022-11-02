@@ -4,8 +4,8 @@
 package api_mocks
 
 import (
-	"github.com/hypertec-cloud/go-hci/api"
 	gomock "github.com/golang/mock/gomock"
+	"github.com/hypertec-cloud/go-hci/api"
 )
 
 // Mock of ApiClient interface

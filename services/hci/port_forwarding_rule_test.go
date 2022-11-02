@@ -2,9 +2,9 @@ package hci
 
 import (
 	"fmt"
+	"github.com/golang/mock/gomock"
 	"github.com/hypertec-cloud/go-hci/mocks"
 	"github.com/hypertec-cloud/go-hci/mocks/services_mocks"
-	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
