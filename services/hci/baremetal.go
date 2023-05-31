@@ -19,9 +19,7 @@ const (
 	BAREMETAL_REBOOT_OPERATION                  = "reboot"
 	BAREMETAL_RECOVER_OPERATION                 = "recover"
 	BAREMETAL_PURGE_OPERATION                   = "releaseBareMetal"
-	BAREMETAL_RESET_PASSWORD_OPERATION          = "resetPassword"
-	BAREMETAL_CREATE_RECOVERY_POINT_OPERATION   = "createRecoveryPoint"
-	BAREMETAL_CHANGE_COMPUTE_OFFERING_OPERATION = "changeComputeOffering"
+	BAREMETAL_CHANGE_NETWORK_OFFERING_OPERATION = "changeNetwork"
 	BAREMETAL_ASSOCIATE_SSH_KEY_OPERATION       = "associateSSHKey"
 )
 
@@ -214,6 +212,6 @@ func (BaremetalApi *BaremetalApi) ChangeNetwork(id string, networkId string) (bo
 	if merr != nil {
 		return false, merr
 	}
-	_, err := BaremetalApi.entityService.Execute(id, BAREMETAL_CHANGE_COMPUTE_OFFERING_OPERATION, send, map[string]string{})
+	_, err := BaremetalApi.entityService.Execute(id, BAREMETAL_CHANGE_NETWORK_OFFERING_OPERATION, send, map[string]string{})
 	return err == nil, err
 }
