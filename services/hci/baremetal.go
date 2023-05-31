@@ -87,10 +87,7 @@ type BaremetalService interface {
 	Stop(id string) (bool, error)
 	AssociateSSHKey(id string, sshKeyName string) (bool, error)
 	Reboot(id string) (bool, error)
-	ChangeComputeOffering(Baremetal) (bool, error)
 	ChangeNetwork(id string, newNetworkId string) (bool, error)
-	ResetPassword(id string) (string, error)
-	CreateRecoveryPoint(id string, recoveryPoint RecoveryPoint) (bool, error)
 }
 
 type BaremetalApi struct {
@@ -210,27 +207,6 @@ func (BaremetalApi *BaremetalApi) Reboot(id string) (bool, error) {
 	return err == nil, err
 }
 
-// Change the compute offering of the baremetal with the specified id exists in the current environment
-// Note: This will reboot your baremetal if running
-func (BaremetalApi *BaremetalApi) ChangeComputeOffering(baremetal Baremetal) (bool, error) {
-	send, merr := json.Marshal(baremetal)
-	if merr != nil {
-		return false, merr
-	}
-	_, err := BaremetalApi.entityService.Execute(baremetal.Id, BAREMETAL_CHANGE_COMPUTE_OFFERING_OPERATION, send, map[string]string{})
-	return err == nil, err
-}
-
-// Reset the password of the baremetal with the specified id exists in the current environment
-func (BaremetalApi *BaremetalApi) ResetPassword(id string) (string, error) {
-	body, err := BaremetalApi.entityService.Execute(id, BAREMETAL_RESET_PASSWORD_OPERATION, []byte{}, map[string]string{})
-	if err != nil {
-		return "", err
-	}
-	baremetal := parseBaremetal(body)
-	return baremetal.Password, nil
-}
-
 // Change the network of the baremetal with the specified id
 // Note: This will reboot your baremetal, remove all pfrs of this baremetal and remove the baremetal from all lbrs.
 func (BaremetalApi *BaremetalApi) ChangeNetwork(id string, networkId string) (bool, error) {
@@ -239,17 +215,5 @@ func (BaremetalApi *BaremetalApi) ChangeNetwork(id string, networkId string) (bo
 		return false, merr
 	}
 	_, err := BaremetalApi.entityService.Execute(id, BAREMETAL_CHANGE_COMPUTE_OFFERING_OPERATION, send, map[string]string{})
-	return err == nil, err
-}
-
-// Create a recovery point of the baremetal with the specified id exists in the current environment
-func (BaremetalApi *BaremetalApi) CreateRecoveryPoint(id string, recoveryPoint RecoveryPoint) (bool, error) {
-	send, merr := json.Marshal(Baremetal{
-		RecoveryPoint: recoveryPoint,
-	})
-	if merr != nil {
-		return false, merr
-	}
-	_, err := BaremetalApi.entityService.Execute(id, BAREMETAL_CREATE_RECOVERY_POINT_OPERATION, send, map[string]string{})
 	return err == nil, err
 }
