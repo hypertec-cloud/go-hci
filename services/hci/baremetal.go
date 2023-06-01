@@ -85,7 +85,6 @@ type BaremetalService interface {
 	Stop(id string) (bool, error)
 	AssociateSSHKey(id string, sshKeyName string) (bool, error)
 	Reboot(id string) (bool, error)
-	ChangeNetwork(id string, newNetworkId string) (bool, error)
 }
 
 type BaremetalApi struct {
@@ -202,16 +201,5 @@ func (BaremetalApi *BaremetalApi) AssociateSSHKey(id string, sshKeyName string) 
 // Reboot a running baremetal with specified id exists in the current environment
 func (BaremetalApi *BaremetalApi) Reboot(id string) (bool, error) {
 	_, err := BaremetalApi.entityService.Execute(id, BAREMETAL_REBOOT_OPERATION, []byte{}, map[string]string{})
-	return err == nil, err
-}
-
-// Change the network of the baremetal with the specified id
-// Note: This will reboot your baremetal, remove all pfrs of this baremetal and remove the baremetal from all lbrs.
-func (BaremetalApi *BaremetalApi) ChangeNetwork(id string, networkId string) (bool, error) {
-	send, merr := json.Marshal(Baremetal{NetworkId: networkId})
-	if merr != nil {
-		return false, merr
-	}
-	_, err := BaremetalApi.entityService.Execute(id, BAREMETAL_CHANGE_NETWORK_OFFERING_OPERATION, send, map[string]string{})
 	return err == nil, err
 }
