@@ -40,7 +40,7 @@ verify: log-verify ## Verify 'vendor' dependencies
 
 .PHONY: lint
 lint: log-lint ## Run linter
-	@bash -c "GO111MODULE=off gometalinter -d ./... 2> >(egrep '(^DEBUG.*linter took|^DEBUG.*total elapsed|^[^D])' >&2)"
+	golangci-lint run
 
 .PHONY: format
 format: log-format ## Format all go files
