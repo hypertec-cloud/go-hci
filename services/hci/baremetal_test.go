@@ -163,8 +163,6 @@ func TestListBaremetalReturnBaremetalsIfSuccess(t *testing.T) {
 		Username:            "list_username_1",
 		ComputeOfferingId:   "list_compute_offering_id_1",
 		ComputeOfferingName: "list_compute_offering_name_1",
-		CpuCount:            2,
-		MemoryInMB:          12425,
 		ZoneId:              "list_zone_id_1",
 		ZoneName:            "list_zone_name_1",
 		ProjectId:           "list_project_id_1",
@@ -368,7 +366,7 @@ func TestDestroyBaremetalReturnTrueIfSuccess(t *testing.T) {
 		entityService: mockEntityService,
 	}
 
-	mockEntityService.EXPECT().Delete(TEST_BAREMETAL_ID, gomock.Any(), gomock.Any()).Return([]byte(`{}`), nil)
+	mockEntityService.EXPECT().Execute(TEST_BAREMETAL_ID, BAREMETAL_PURGE_OPERATION, gomock.Any(), gomock.Any()).Return([]byte(`{}`), nil)
 
 	//when
 	success, _ := baremetalService.Destroy(TEST_BAREMETAL_ID)
@@ -389,7 +387,7 @@ func TestDestroyBaremetalReturnFalseIfError(t *testing.T) {
 	}
 
 	mockError := mocks.MockError{"some_destroy_baremetal_error"}
-	mockEntityService.EXPECT().Delete(TEST_BAREMETAL_ID, gomock.Any(), gomock.Any()).Return([]byte(`{}`), mockError)
+	mockEntityService.EXPECT().Execute(TEST_BAREMETAL_ID, BAREMETAL_PURGE_OPERATION, gomock.Any(), gomock.Any()).Return([]byte(`{}`), mockError)
 
 	//when
 	success, err := baremetalService.Destroy(TEST_BAREMETAL_ID)
